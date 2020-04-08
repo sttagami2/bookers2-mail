@@ -7,6 +7,12 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+
+  after_create :send_welcome_mail
+
+  def send_welcome_mail
+    UserMailer.user_welcome_mail(self).deliver
+  end
       
   # フォローしているユーザを取り出す
   has_many :following_relationships, foreign_key: "follower_id", class_name: "Relationship", dependent: :destroy
